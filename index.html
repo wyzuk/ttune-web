@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>টি - টিউন</title>
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+  
+  <!-- Hind Siliguri Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Fullscreen Particle Canvas (Reacts to Audio, Always Visible) -->
+  <canvas id="particlesCanvas"></canvas>
+
+  <!-- App Wrapper (100vh Single-Screen) -->
+  <div class="app-container" id="appContainer">
+    
+    <!-- Top Floating Header -->
+    <header class="app-header">
+      <div class="brand-title">টি - টিউন</div>
+      
+      <div class="header-actions">
+        <!-- Hide UI / Visualizer Mode Button -->
+        <button class="tool-btn" id="hideUiBtn" aria-label="Hide interface" title="ভিজ্যুয়ালাইজার মোড (Hide UI)">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+
+        <!-- GitHub Button -->
+        <a href="https://github.com/wyzuk" target="_blank" rel="noopener noreferrer" class="github-btn" aria-label="GitHub Profile @wyzuk">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>wyzuk</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Workspace (Floating Layout, No Giant Containers) -->
+    <main class="main-layout">
+      
+      <!-- LEFT: Floating Player Content -->
+      <section class="player-section" aria-label="Music Player">
+        
+        <!-- Status Indicator Pill -->
+        <div class="status-wrap">
+          <div class="status-pill" id="statusPill">
+            <span class="status-dot"></span>
+            <span class="status-text" id="statusText">শুনতে প্লে করুন</span>
+          </div>
+        </div>
+
+        <!-- Song Information (Floating naturally, no card box) -->
+        <div class="song-info-group">
+          <h1 class="song-title-en" id="currentTitleEn">Jeno Tomari Kache</h1>
+          <div class="song-title-bn" id="currentTitleBn">যেন তোমারই কাছে</div>
+        </div>
+
+        <!-- Progress Bar & Time Display -->
+        <div class="progress-section">
+          <div class="time-row">
+            <span id="currentTime" class="time-label">00:00</span>
+            <span id="durationTime" class="time-label">00:00</span>
+          </div>
+          <div class="progress-bar-container" id="progressBarContainer" role="slider" aria-label="Seek track" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+            <div class="progress-track">
+              <div class="progress-fill" id="progressBarFill"></div>
+              <div class="progress-thumb" id="progressThumb"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Player Controls & Volume -->
+        <div class="controls-section">
+          <div class="playback-controls">
+            <!-- Previous Button -->
+            <button class="ctrl-btn" id="prevBtn" aria-label="Previous song" title="আগের গান (Arrow Left)">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                <line x1="5" y1="19" x2="5" y2="5"></line>
+              </svg>
+            </button>
+
+            <!-- Large Circular Play/Pause Button -->
+            <button class="play-btn" id="playPauseBtn" aria-label="Play" title="শুনুন / থামান (Space)">
+              <!-- Play Icon -->
+              <svg id="playIcon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                <polygon points="6 3 20 12 6 21 6 3"></polygon>
+              </svg>
+              <!-- Pause Icon -->
+              <svg id="pauseIcon" class="hidden" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1.5"></rect>
+                <rect x="14" y="4" width="4" height="16" rx="1.5"></rect>
+              </svg>
+            </button>
+
+            <!-- Next Button -->
+            <button class="ctrl-btn" id="nextBtn" aria-label="Next song" title="পরের গান (Arrow Right)">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Volume Controls -->
+          <div class="volume-group">
+            <button class="mute-btn" id="muteBtn" aria-label="Mute" title="মিউট (M)">
+              <svg id="volHighIcon" class="vol-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+              <svg id="volMuteIcon" class="vol-icon hidden" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 .53 11.26M15.54 8.46a5 5 0 0 1-.22 5.86"></path>
+              </svg>
+            </button>
+            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.85" aria-label="Volume">
+          </div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT: Floating Playlist of Individual Rounded Song Cards -->
+      <section class="playlist-section" aria-label="Song Playlist">
+        <div class="playlist-header">গানের তালিকা</div>
+        <div class="playlist-scroll-mask">
+          <div class="playlist-list" id="playlistContainer" role="listbox" aria-label="Songs list">
+            <!-- Individual rounded song rows injected dynamically via script.js -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Restore UI Button (Appears in Hide Mode on Hover / Mouse Move) -->
+  <button class="restore-ui-btn hidden" id="restoreUiBtn" aria-label="Restore interface" title="ইন্টারফেস ফিরিয়ে আনুন (Esc)">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+      <line x1="1" y1="1" x2="23" y2="23"></line>
+    </svg>
+  </button>
+
+  <script src="script.js"></script>
+</body>
+</html>
